@@ -10,6 +10,8 @@ puts 'Fördertechnik'.to_latin9
 # => "F\xf6rdertechnik"
 ```
 
+__Note:__ The lib does not check if the string is already UTF-8 encoded. Converting a UTF-8 string from Latin-9 to UTF-8 results into a bad encoding result. You can use [mruby-string-is-utf8][mruby-string-is-utf8] for that.
+
 ## Installation
 
 Add the line below to your `build_config.rb`:
@@ -67,5 +69,6 @@ Made with :yum: from Leipzig
 © 2018 [appPlant GmbH][appplant]
 
 [mruby]: https://github.com/mruby/mruby
+[mruby-string-is-utf8]: https://github.com/Asmod4n/mruby-string-is-utf8
 [license]: http://opensource.org/licenses/MIT
 [appplant]: www.appplant.de
