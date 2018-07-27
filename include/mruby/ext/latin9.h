@@ -24,14 +24,13 @@
 #ifndef MRUBY_LATIN9_H
 #define MRUBY_LATIN9_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <mruby.h>
 
-char *utf8_to_latin9(const char *const string);
-char *latin9_to_utf8(const char *const string);
+MRB_BEGIN_DECL
 
-#ifdef __cplusplus
-}
-#endif
+MRB_API char *utf8_to_latin9(const char *const string);
+MRB_API char *latin9_to_utf8(const char *const string);
+
+MRB_END_DECL
+
 #endif
