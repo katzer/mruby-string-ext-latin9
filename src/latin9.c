@@ -25,7 +25,6 @@
 
 #include "mruby.h"
 #include "mruby/string.h"
-#include "mruby/ext/latin9.h"
 
 #include <errno.h>
 #include <stdlib.h>
