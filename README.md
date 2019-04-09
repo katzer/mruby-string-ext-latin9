@@ -1,4 +1,4 @@
-# mruby-string-ext-latin9 [![Build Status](https://travis-ci.org/appPlant/mruby-string-ext-latin9.svg?branch=master)](https://travis-ci.org/appPlant/mruby-string-ext-latin9) [![Build status](https://ci.appveyor.com/api/projects/status/0e2cc9xaxefuxyrv/branch/master?svg=true)](https://ci.appveyor.com/project/katzer/mruby-string-ext-latin9/branch/master)
+# mruby-string-ext-latin9 [![Build Status](https://travis-ci.com/appPlant/mruby-string-ext-latin9.svg?branch=master)](https://travis-ci.com/appPlant/mruby-string-ext-latin9) [![Build status](https://ci.appveyor.com/api/projects/status/0e2cc9xaxefuxyrv/branch/master?svg=true)](https://ci.appveyor.com/project/katzer/mruby-string-ext-latin9/branch/master)
 
 Conversion from iso-8859-15 (Latin9) to UTF-8 for [mruby][mruby].
 
@@ -64,7 +64,7 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/apppla
 
 The mgem is available as open source under the terms of the [MIT License][license].
 
-Made with :yum: from Leipzig
+Made with :yum: in Leipzig
 
 © 2018 [appPlant GmbH][appplant]
 
