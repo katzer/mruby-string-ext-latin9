@@ -25,7 +25,6 @@
 
 #include "mruby.h"
 #include "mruby/string.h"
-#include "mruby/ext/latin9.h"
 
 #include <errno.h>
 #include <stdlib.h>
@@ -35,10 +34,10 @@
  * Create a dynamically allocated copy of string,
  * changing the encoding from ISO-8859-15 to UTF-8.
  */
-char *latin9_to_utf8(const char *const string)
+static mrb_value latin9_to_utf8(mrb_state *mrb, const char *const string)
 {
-    char   *result;
     size_t  n = 0;
+    mrb_value out;
 
     if (string) {
         const unsigned char  *s = (const unsigned char *)string;
@@ -56,20 +55,11 @@ char *latin9_to_utf8(const char *const string)
                 n += 2;
             }
     }
-
-    /* Allocate n+1 (to n+7) bytes for the converted string. */
-    result = malloc((n | 7) + 1);
-    if (!result) {
-        errno = ENOMEM;
-        return NULL;
-    }
-
-    /* Clear the tail of the string, setting the trailing NUL. */
-    memset(result + (n | 7) - 7, 0, 8);
+    out = mrb_str_new_capa(mrb, n + 1);
 
     if (n) {
         const unsigned char  *s = (const unsigned char *)string;
-        unsigned char        *d = (unsigned char *)result;
+        unsigned char        *d = (unsigned char *)RSTRING_PTR(out);
 
         while (*s)
             if (*s < 128) {
@@ -89,10 +79,13 @@ char *latin9_to_utf8(const char *const string)
                 *(d++) = 195;
                 *(d++) = *(s++) - 64;
             }
+
+        *d = 0;
+        mrb_str_resize(mrb, out, (char*)d - RSTRING_PTR(out));
     }
 
     /* Done. Remember to free() the resulting string when no longer needed. */
-    return result;
+    return out;
 }
 
 /*
@@ -100,11 +93,12 @@ char *latin9_to_utf8(const char *const string)
  * changing the encoding from UTF-8 to ISO-8859-15.
  * Unsupported code points are ignored.
  */
-char *utf8_to_latin9(const char *const string)
+static mrb_value utf8_to_latin9(mrb_state *mrb, const char *const string)
 {
-    size_t         size = 0;
-    size_t         used = 0;
-    unsigned char *result = NULL;
+    size_t    size = 0;
+    size_t    used = 0;
+    mrb_value out = mrb_str_new(mrb, NULL, 0);
+    unsigned char *result = (unsigned char*)RSTRING_PTR(out);
 
     if (string) {
         const unsigned char  *s = (const unsigned char *)string;
@@ -112,16 +106,8 @@ char *utf8_to_latin9(const char *const string)
         while (*s) {
 
             if (used >= size) {
-                void *const old = result;
-
-                size = (used | 255) + 257;
-                result = realloc(result, size);
-                if (!result) {
-                    if (old)
-                        free(old);
-                    errno = ENOMEM;
-                    return NULL;
-                }
+                mrb_str_resize(mrb, out, size);
+                result = (unsigned char*)RSTRING_PTR(out);
             }
 
             if (*s < 128) {
@@ -228,37 +214,23 @@ char *utf8_to_latin9(const char *const string)
 
             s++;
         }
+
+        mrb_str_resize(mrb, out, used);
     }
 
-    {
-        void *const old = result;
-
-        size = (used | 7) + 1;
-
-        result = realloc(result, size);
-        if (!result) {
-            if (old)
-                free(old);
-            errno = ENOMEM;
-            return NULL;
-        }
-
-        memset(result + used, 0, size - used);
-    }
-
-    return (char *)result;
+    return out;
 }
 
 static mrb_value
 mrb_f_to_latin9 (mrb_state *mrb, mrb_value self)
 {
-    return mrb_str_new_cstr(mrb, utf8_to_latin9(RSTR_PTR(mrb_str_ptr(self))));
+    return utf8_to_latin9(mrb, RSTRING_PTR(self));
 }
 
 static mrb_value
 mrb_f_from_latin9 (mrb_state *mrb, mrb_value self)
 {
-    return mrb_str_new_cstr(mrb, latin9_to_utf8(RSTR_PTR(mrb_str_ptr(self))));
+    return latin9_to_utf8(mrb, RSTRING_PTR(self));
 }
 
 void
